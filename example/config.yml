@@ -1,0 +1,4 @@
+---
+databases:
+  postgres:
+    address: postgres:5432
