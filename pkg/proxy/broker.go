@@ -12,7 +12,7 @@ import (
 	"regexp"
 )
 
-func NewPGBroker(resolver backend.PGResolver, logging bool) *proxy.Server {
+func NewPGBroker(resolver backend.PGResolver, rewriter backend.PGStartupMessageRewriter, logging bool) *proxy.Server {
 	clientStreamCallbacks := proxy.NewStreamCallbackFactories()
 	serverStreamCallbacks := proxy.NewStreamCallbackFactories()
 
@@ -23,6 +23,7 @@ func NewPGBroker(resolver backend.PGResolver, logging bool) *proxy.Server {
 
 	server := &proxy.Server{
 		PGResolver:                    resolver,
+		PGStartupMessageRewriter:      rewriter,
 		ConnInfoStore:                 backend.NewInMemoryConnInfoStore(),
 		ServerStreamCallbackFactories: serverStreamCallbacks,
 		ClientStreamCallbackFactories: clientStreamCallbacks,

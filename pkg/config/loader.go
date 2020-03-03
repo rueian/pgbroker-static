@@ -18,9 +18,12 @@ func NewSettings(path string) (*Settings, error) {
 }
 
 type YML struct {
-	Databases map[string]struct {
-		Address string `yaml:"address"`
-	} `yaml:"databases"`
+	Databases map[string]DBLink `yaml:"databases"`
+}
+
+type DBLink struct {
+	Datname string `yaml:"datname"`
+	Address string `yaml:"address"`
 }
 
 type Settings struct {
@@ -29,13 +32,10 @@ type Settings struct {
 	yml  YML
 }
 
-func (s *Settings) GetAddress(database string) string {
+func (s *Settings) GetLink(entry string) DBLink {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if m, ok := s.yml.Databases[database]; ok {
-		return m.Address
-	}
-	return ""
+	return s.yml.Databases[entry]
 }
 
 func (s *Settings) Watch() {

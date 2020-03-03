@@ -1,4 +1,5 @@
 ---
 databases:
-  postgres:
+  entrydb:
+    datname: postgres
     address: postgres:5432

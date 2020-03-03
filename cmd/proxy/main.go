@@ -33,7 +33,8 @@ func main() {
 	if logging != "true" {
 		log.Printf("Query Logging is disabled.\n")
 	}
-	broker := proxy.NewPGBroker(&resolver.Static{Settings: settings}, logging == "true")
+	resver := &resolver.Static{Settings: settings}
+	broker := proxy.NewPGBroker(resver, resver, logging == "true")
 
 	go broker.Serve(ln)
 	log.Println("proxy started at " + addr)

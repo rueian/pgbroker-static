@@ -19,7 +19,8 @@ See [./example/config.yml](./example/config.yml)
 ```yaml
 ---
 databases:
-  postgres:                 # <- the database name you sent in Startup Message
+  entrydb:                  # <- the database name you sent in the Startup Message
+    datname: postgres       # <- the actual database name of the target pg instance
     address: postgres:5432  # <- the actual tcp address of the target pg instance
 ```
 
