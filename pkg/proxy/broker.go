@@ -10,6 +10,7 @@ import (
 	"net"
 	"os"
 	"regexp"
+	"time"
 )
 
 func NewPGBroker(resolver backend.PGResolver, rewriter backend.PGStartupMessageRewriter, logging bool) *proxy.Server {
@@ -17,8 +18,22 @@ func NewPGBroker(resolver backend.PGResolver, rewriter backend.PGStartupMessageR
 	serverStreamCallbacks := proxy.NewStreamCallbackFactories()
 
 	if logging {
-		clientStreamCallbacks.SetFactory('Q', loggingFactory)
-		clientStreamCallbacks.SetFactory('P', loggingFactory)
+		// endless channel and goroutine
+		ch := make(chan string, 1000)
+		go func() {
+			ticker := time.NewTicker(5 * time.Second)
+			buf := bufio.NewWriter(os.Stdout)
+			for {
+				select {
+				case <-ticker.C:
+					buf.Flush()
+				case s := <-ch:
+					buf.WriteString(s)
+				}
+			}
+		}()
+		clientStreamCallbacks.SetFactory('Q', loggingFactory(ch))
+		clientStreamCallbacks.SetFactory('P', loggingFactory(ch))
 	}
 
 	server := &proxy.Server{
@@ -53,29 +68,28 @@ func NewPGBroker(resolver backend.PGResolver, rewriter backend.PGStartupMessageR
 
 var spaces = regexp.MustCompile(`\s+`)
 
-func loggingFactory(ctx *proxy.Ctx) proxy.StreamCallback {
-	buf := bufio.NewWriter(os.Stdout)
+func loggingFactory(ch chan<- string) func(ctx *proxy.Ctx) proxy.StreamCallback {
+	return func(ctx *proxy.Ctx) proxy.StreamCallback {
+		user := ctx.ConnInfo.StartupParameters["user"]
+		database := ctx.ConnInfo.StartupParameters["database"]
+		ch <- fmt.Sprintf("Query: db=%s user=%s query=", database, user)
 
-	user := ctx.ConnInfo.StartupParameters["user"]
-	database := ctx.ConnInfo.StartupParameters["database"]
-	buf.WriteString(fmt.Sprintf("Query: db=%s user=%s query=", database, user))
-
-	return func(slice proxy.Slice) proxy.Slice {
-		if !slice.Head {
+		return func(slice proxy.Slice) proxy.Slice {
 			var query string
-			if slice.Data[len(slice.Data)-1] == 0 {
-				query = string(slice.Data[:len(slice.Data)-1])
-			} else {
-				query = string(slice.Data)
+			if !slice.Head {
+				if slice.Data[len(slice.Data)-1] == 0 {
+					query = string(slice.Data[:len(slice.Data)-1])
+				} else {
+					query = string(slice.Data)
+				}
+				query = spaces.ReplaceAllString(query, " ")
 			}
-			query = spaces.ReplaceAllString(query, " ")
-			buf.WriteString(query)
-		}
-		if slice.Last {
-			buf.WriteString("\n")
-			buf.Flush()
-		}
+			if slice.Last {
+				query = query + "\n"
+			}
+			ch <- query
 
-		return slice
+			return slice
+		}
 	}
 }
