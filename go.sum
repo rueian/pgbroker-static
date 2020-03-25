@@ -1,5 +1,5 @@
-github.com/rueian/pgbroker v0.0.12 h1:Ia91YouLJtfViO7xwycs3W00lzrLkdGnSGHD3dSNSvI=
-github.com/rueian/pgbroker v0.0.12/go.mod h1:uxedndRlugYpGkW+WgFj2bXEZ5An1kSSwyPwqqldtLQ=
+github.com/rueian/pgbroker v0.0.13 h1:0OVEjqmruxvFYVCFnsg7td34qMUPBV3+/zR7HeFpD3o=
+github.com/rueian/pgbroker v0.0.13/go.mod h1:uxedndRlugYpGkW+WgFj2bXEZ5An1kSSwyPwqqldtLQ=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.8 h1:obN1ZagJSUGI0Ek/LBmuj4SNLPfIny3KsKFopxRdj10=
