@@ -29,7 +29,7 @@ func main() {
 		log.Fatalf("Fail to start proxy at %s\n", addr)
 	}
 
-	logging := env("ENABLE_LOGGING", "true")
+	logging := env("ENABLE_LOGGING", "false")
 	if logging != "true" {
 		log.Printf("Query Logging is disabled.\n")
 	}
