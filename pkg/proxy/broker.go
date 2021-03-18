@@ -61,6 +61,7 @@ func NewPGBroker(resolver backend.PGResolver, rewriter backend.PGStartupMessageR
 
 			log.Printf("Error: client=%s server=%s user=%s db=%s err=%s", client, server, user, database, err.Error())
 		},
+		Splice: !logging,
 	}
 
 	return server
