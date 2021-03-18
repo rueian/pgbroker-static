@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
   pgbroker:
-    image: pgbroker-static:latest
+    image: rueian/pgbroker-static:latest
     build:
       context: .
     environment:
